@@ -15,16 +15,18 @@ pipeline {
             }
         }
 
-        post {
-            always {
-                echo "pipeline completed..."
-            }
-            failure {
-                echo "pipeline failed..."
-            }
-            success {
-                echo "pipeline completed successfully..."
-            }
+
+    }
+
+    post {
+        always {
+            echo "pipeline completed..."
+        }
+        failure {
+            echo "pipeline failed..."
+        }
+        success {
+            echo "pipeline completed successfully..."
         }
     }
 }
