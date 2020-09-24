@@ -4,6 +4,12 @@ pipeline {
 //         maven '3.6.3'
 //         jdk 'jdk8'
 //     }
+
+    environment {
+        registry = "thawedbuffalosolutions/greetings-svc"
+        registryCredential = 'thawedbuffalosolutions'
+        dockerImage = ''
+    }
     stages {
         stage("setup") {
             steps {
@@ -28,18 +34,32 @@ pipeline {
             }
         }
 
-        stage("deploy") {
+        stage("build-container") {
             steps{
-                echo "deploying the application to Azure..."
+                echo "building docker image..."
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
             }
-
         }
 
+        stage("deploy-container-to-hub") {
+            steps {
+                echo "deploying image to Docker hub..."
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
     }
 
     post {
         always {
             echo "pipeline completed..."
+            echo "cleaning up..."
+            sh "docker rmi $registry:$BUILD_NUMBER"
         }
         failure {
             echo "pipeline failed..."
