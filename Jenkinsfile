@@ -1,14 +1,10 @@
 pipeline {
-    agent any
-//     tools {
-//         maven '3.6.3'
-//         jdk 'jdk8'
-//     }
+    agent { dockerfile true }
 
     environment {
         registry = "thawedbuffalosolutions/greetings-svc"
         registryCredential = 'thawedbuffalosolutions'
-        dockerImage = ''
+        dockerImage = 'greetingsSvcDockerImage'
     }
     stages {
         stage("setup") {
@@ -37,9 +33,7 @@ pipeline {
         stage("build-container") {
             steps{
                 echo "building docker image..."
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
+                docker.build("dockerImage:${env.BUILD_ID}")
             }
         }
 
