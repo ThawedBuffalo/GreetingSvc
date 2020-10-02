@@ -34,7 +34,8 @@ pipeline {
             steps{
                 echo "building docker image..."
                 script {
-                dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                	dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
             }
         }
 
