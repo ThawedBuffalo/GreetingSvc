@@ -1,10 +1,10 @@
 pipeline {
-    agent { dockerfile true }
+    agent any
 
     environment {
         registry = "thawedbuffalosolutions/greetings-svc"
         registryCredential = 'thawedbuffalosolutions'
-        dockerImage = 'greetingsSvcDockerImage'
+        dockerImage = ''
     }
     stages {
         stage("setup") {
@@ -33,18 +33,19 @@ pipeline {
         stage("build-container") {
             steps{
                 echo "building docker image..."
-                docker.build("dockerImage:${env.BUILD_ID}")
+                script {
+                dockerImage = docker.build registry + ":$BUILD_NUMBER"
             }
         }
 
         stage("deploy-container-to-hub") {
             steps {
-                echo "deploying image to Docker hub..."
-                script {
-                    docker.withRegistry('', registryCredential) {
-                        dockerImage.push()
+            	echo "building docker image..." 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
                     }
-                }
+                } 
             }
         }
     }
